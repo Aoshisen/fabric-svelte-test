@@ -1,0 +1,1 @@
+export const App_name = "Svelte + fabric + Scss + Inversity js + zod + Typescript"
