@@ -49,8 +49,8 @@
 
 <style>
 	.form-input {
-		width: 100%;
 		padding: 8px 12px;
+		min-width: 200px;
 		font-size: 14px;
 		line-height: 1.5;
 		color: #333;

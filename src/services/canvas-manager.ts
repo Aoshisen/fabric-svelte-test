@@ -1,10 +1,9 @@
 import type { Canvas, FabricObject } from "fabric";
-import type { ICanvasManager } from "./canvas-manager.interface";
 import { injectable } from 'inversify';
 import type { CanvasEventName } from "../const/event_name";
 
 @injectable()
-export class CanvasManager implements ICanvasManager {
+export class CanvasManager {
 	private canvas: Canvas | null = null;
 	private objectAddedCallbacks: Array<(obj: FabricObject) => void> = [];
 	private objectRemovedCallbacks: Array<(obj: FabricObject) => void> = [];

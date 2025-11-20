@@ -1,13 +1,12 @@
 import { injectable } from 'inversify';
 import type { BaseFormItem } from '../libs/form-item/base';
-import type { IFormManager } from './form-manager.interface';
 
 /**
  * 表单管理器实现
  * 类似于 CanvasManager，用于管理表单项的生命周期和状态
  */
 @injectable()
-export class FormManager implements IFormManager {
+export class FormManager {
 	private container: HTMLElement | null = null;
 	private formItems: BaseFormItem[] = [];
 	private formItemAddedCallbacks: Array<(formItem: BaseFormItem) => void> = [];
