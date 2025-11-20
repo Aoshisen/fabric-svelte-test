@@ -1,7 +1,6 @@
 import { injectable } from 'inversify';
 import type { BaseFormItem } from '../libs/form-item/base';
 import type { IFormManager } from './form-manager.interface';
-import { mount } from 'svelte';
 
 /**
  * 表单管理器实现
@@ -14,6 +13,7 @@ export class FormManager implements IFormManager {
 	private formItemAddedCallbacks: Array<(formItem: BaseFormItem) => void> = [];
 	private formItemRemovedCallbacks: Array<(formItem: BaseFormItem) => void> = [];
 	private formValuesChangedCallbacks: Array<(values: Record<string, any>) => void> = [];
+	private formSteateChangedCallbacks: Array<(values: Record<string, any>) => void> = [];
 
 	/**
 	 * 初始化表单管理器
@@ -131,6 +131,18 @@ export class FormManager implements IFormManager {
 	}
 
 	/**
+	 * 获取表单状态
+	 */
+	public getFormSteates(): Record<string, any> {
+		const states: Record<string, any> = {};
+		this.formItems.forEach((item) => {
+			const config = item.getConfig();
+			states[config.name] = item.getState();
+		});
+		return states;
+	}
+
+	/**
 	 * 设置表单值
 	 */
 	public setFormValues(values: Record<string, any>): void {
@@ -168,6 +180,9 @@ export class FormManager implements IFormManager {
 	public onFormItemRemoved(callback: (formItem: BaseFormItem) => void): void {
 		this.formItemRemovedCallbacks.push(callback);
 	}
+	public onFormSteateChanged(callback: (states: Record<string, any>) => void): void {
+		this.formSteateChangedCallbacks.push(callback);
+	}
 
 	/**
 	 * 订阅表单值变化事件
@@ -183,6 +198,9 @@ export class FormManager implements IFormManager {
 		formItem.onChange(() => {
 			this.notifyFormValuesChanged();
 		});
+		formItem.onStateChange(() => {
+			this.notifyFormSteateChanged()
+		})
 	}
 
 	/**
@@ -191,6 +209,13 @@ export class FormManager implements IFormManager {
 	private notifyFormValuesChanged(): void {
 		const values = this.getFormValues();
 		this.formValuesChangedCallbacks.forEach((callback) => callback(values));
+	}
+	/**
+	 * 通知表单状态变化
+	 */
+	private notifyFormSteateChanged(): void {
+		const states = this.getFormSteates();
+		this.formSteateChangedCallbacks.forEach((callback) => callback(states));
 	}
 }
 

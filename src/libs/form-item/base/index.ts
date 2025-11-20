@@ -36,6 +36,13 @@ export interface FormItemState {
 	validating: boolean;
 }
 
+export const default_state: FormItemState = {
+	value: null,
+	touched: false,
+	error: null,
+	validating: false,
+}
+
 /**
  * 基础表单项类
  * 提供表单项的核心逻辑和状态管理

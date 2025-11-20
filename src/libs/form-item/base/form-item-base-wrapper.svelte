@@ -1,36 +1,10 @@
 <script lang="ts">
-	import type { BaseFormItem, FormItemState, FormItemConfig } from "./index";
-	import { cloneDeep } from "lodash-es";
-	import { onMount, onDestroy } from "svelte";
-
-	interface Props {
-		formItem: BaseFormItem;
+	import type { FormItemState, FormItemConfig } from "./index";
+	export let formState: FormItemState;
+	export let formConfig: FormItemConfig;
+	$: {
+		console.log(formState, "<<<<<<<<<<<");
 	}
-
-	let { formItem }: Props = $props();
-
-	// 响应式状态
-	let formState: FormItemState = $state(cloneDeep(formItem.getState()));
-	let formConfig: FormItemConfig = $state(cloneDeep(formItem.getConfig()));
-
-	// 获取组件和 props
-	const Component = formItem.getComponent();
-	let componentProps = $derived(formItem.getComponentProps());
-
-	// 订阅状态变化
-	let unsubscribe: (() => void) | null = null;
-
-	onMount(() => {
-		unsubscribe = formItem.onStateChange((newState) => {
-			formState = newState;
-		});
-	});
-
-	onDestroy(() => {
-		if (unsubscribe) {
-			unsubscribe();
-		}
-	});
 </script>
 
 <div
@@ -46,7 +20,7 @@
 	</div>
 
 	<div class="form-item-control">
-		<Component {...componentProps} />
+		<slot></slot>
 	</div>
 
 	{#if formState.error && formState.touched}

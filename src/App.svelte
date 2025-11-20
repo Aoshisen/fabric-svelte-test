@@ -11,6 +11,9 @@
 	import { Rect, Circle } from "fabric";
 	import { InputFormItem } from "./libs/form-item/input";
 	import { onMount } from "svelte";
+	import { get } from "lodash-es";
+	import { default_state } from "./libs/form-item/base";
+	import FormItemBaseWrapper from "./libs/form-item/base/form-item-base-wrapper.svelte";
 
 	const rect = new Rect({
 		left: 100,
@@ -67,6 +70,8 @@
 			console.log("object modified:", val);
 		});
 	};
+	let form_values = $state({});
+	let form_states = $state({});
 	onMount(() => {
 		if (!form_container) {
 			return;
@@ -85,7 +90,12 @@
 
 		// 监听表单值变化
 		formManager.onFormValuesChanged((values) => {
-			console.log("Form values changed:", values);
+			// console.log("Form values changed:", values);
+			form_values = values;
+		});
+		formManager.onFormSteateChanged((states) => {
+			form_states = states;
+			// console.log(form_states, get(form_states, "email"));
 		});
 
 		// 添加到 FormManager
@@ -100,8 +110,17 @@
 		<Form slot="content" bind:form_container>
 			{#each form_items as item (item.getConfig().name)}
 				{@const Component = item.getComponent()}
-				{@const props = item.getComponentProps()}
-				<Component {...props} />
+				{@const states = get(
+					form_states,
+					item.getConfig().name,
+					default_state,
+				)}
+				<FormItemBaseWrapper
+					formConfig={item.getConfig()}
+					formState={states}
+				>
+					<Component {...item.getComponentProps()} />
+				</FormItemBaseWrapper>
 			{/each}
 		</Form>
 	</Layout>

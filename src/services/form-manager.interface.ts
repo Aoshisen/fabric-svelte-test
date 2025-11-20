@@ -92,4 +92,9 @@ export interface IFormManager {
 	 * 订阅表单值变化事件
 	 */
 	onFormValuesChanged(callback: (values: Record<string, any>) => void): void;
+
+	/**
+	 * 订阅表单状态变化事件
+	 */
+	onFormSteateChanged(callback: (states: Record<string, any>) => void): void;
 }
