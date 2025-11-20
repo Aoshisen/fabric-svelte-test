@@ -34,9 +34,9 @@ export class FormManager implements IFormManager {
 	 */
 	public addFormItem(formItem: BaseFormItem): void {
 		this.formItems.push(formItem);
-		// this.setupFormItemListeners(formItem);
-		// this.formItemAddedCallbacks.forEach((callback) => callback(formItem));
-		// this.notifyFormValuesChanged();
+		this.setupFormItemListeners(formItem);
+		this.formItemAddedCallbacks.forEach((callback) => callback(formItem));
+		this.notifyFormValuesChanged();
 	}
 
 	/**

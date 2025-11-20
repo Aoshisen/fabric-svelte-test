@@ -1,15 +1,8 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	export let onInit: (container: HTMLElement) => void = () => {};
-
-	let formContainer: HTMLElement;
-
-	onMount(() => {
-		onInit?.(formContainer);
-	});
+	export let form_container: HTMLElement;
 </script>
 
-<div bind:this={formContainer} class="form-container">
+<div bind:this={form_container} class="form-container">
 	<slot></slot>
 </div>
 
