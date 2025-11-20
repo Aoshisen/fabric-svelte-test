@@ -60,7 +60,7 @@
 
 	// 响应式表单项列表 - 从 FormManager 获取
 	let form_items = $state(formManager.getFormItems());
-	let form_container: HTMLElement;
+	let form_container: any = $state(null);
 
 	// Canvas 初始化
 	const handleCanvasInit = (canvas: any) => {
