@@ -96,5 +96,5 @@ export interface IFormManager {
 	/**
 	 * 订阅表单状态变化事件
 	 */
-	onFormSteateChanged(callback: (states: Record<string, any>) => void): void;
+	onFormStateChanged(callback: (states: Record<string, any>) => void): void;
 }

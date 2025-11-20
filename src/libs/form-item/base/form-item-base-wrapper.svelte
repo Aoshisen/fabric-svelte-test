@@ -2,9 +2,6 @@
 	import type { FormItemState, FormItemConfig } from "./index";
 	export let formState: FormItemState;
 	export let formConfig: FormItemConfig;
-	$: {
-		console.log(formState, "<<<<<<<<<<<");
-	}
 </script>
 
 <div

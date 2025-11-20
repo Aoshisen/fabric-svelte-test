@@ -13,7 +13,7 @@ export class FormManager implements IFormManager {
 	private formItemAddedCallbacks: Array<(formItem: BaseFormItem) => void> = [];
 	private formItemRemovedCallbacks: Array<(formItem: BaseFormItem) => void> = [];
 	private formValuesChangedCallbacks: Array<(values: Record<string, any>) => void> = [];
-	private formSteateChangedCallbacks: Array<(values: Record<string, any>) => void> = [];
+	private formStateChangedCallbacks: Array<(values: Record<string, any>) => void> = [];
 
 	/**
 	 * 初始化表单管理器
@@ -133,7 +133,7 @@ export class FormManager implements IFormManager {
 	/**
 	 * 获取表单状态
 	 */
-	public getFormSteates(): Record<string, any> {
+	public getFormStates(): Record<string, any> {
 		const states: Record<string, any> = {};
 		this.formItems.forEach((item) => {
 			const config = item.getConfig();
@@ -180,8 +180,8 @@ export class FormManager implements IFormManager {
 	public onFormItemRemoved(callback: (formItem: BaseFormItem) => void): void {
 		this.formItemRemovedCallbacks.push(callback);
 	}
-	public onFormSteateChanged(callback: (states: Record<string, any>) => void): void {
-		this.formSteateChangedCallbacks.push(callback);
+	public onFormStateChanged(callback: (states: Record<string, any>) => void): void {
+		this.formStateChangedCallbacks.push(callback);
 	}
 
 	/**
@@ -199,7 +199,7 @@ export class FormManager implements IFormManager {
 			this.notifyFormValuesChanged();
 		});
 		formItem.onStateChange(() => {
-			this.notifyFormSteateChanged()
+			this.notifyFormStateChanged()
 		})
 	}
 
@@ -213,9 +213,9 @@ export class FormManager implements IFormManager {
 	/**
 	 * 通知表单状态变化
 	 */
-	private notifyFormSteateChanged(): void {
-		const states = this.getFormSteates();
-		this.formSteateChangedCallbacks.forEach((callback) => callback(states));
+	private notifyFormStateChanged(): void {
+		const states = this.getFormStates();
+		this.formStateChangedCallbacks.forEach((callback) => callback(states));
 	}
 }
 

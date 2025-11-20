@@ -93,7 +93,7 @@
 			// console.log("Form values changed:", values);
 			form_values = values;
 		});
-		formManager.onFormSteateChanged((states) => {
+		formManager.onFormStateChanged((states) => {
 			form_states = states;
 			// console.log(form_states, get(form_states, "email"));
 		});
