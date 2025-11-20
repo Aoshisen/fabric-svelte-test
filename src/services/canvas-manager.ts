@@ -1,7 +1,7 @@
-// src/services/canvas-manager.ts
 import type { Canvas, FabricObject } from "fabric";
 import type { ICanvasManager } from "./canvas-manager.interface";
 import { injectable } from 'inversify';
+import type { CanvasEventName } from "../const/event_name";
 
 @injectable()
 export class CanvasManager implements ICanvasManager {
@@ -21,40 +21,40 @@ export class CanvasManager implements ICanvasManager {
 	private setupEventListeners(): void {
 		if (!this.canvas) return;
 
-		this.canvas.on("object:added", (options: any) => {
+		this.canvas.on('object:added' satisfies CanvasEventName, (options: any) => {
 			const obj = options.target;
 			if (obj) {
 				this.objectAddedCallbacks.forEach((callback) => callback(obj));
 			}
 		});
 
-		this.canvas.on("object:removed", (options: any) => {
+		this.canvas.on('object:removed' satisfies CanvasEventName, (options: any) => {
 			const obj = options.target;
 			if (obj) {
 				this.objectRemovedCallbacks.forEach((callback) => callback(obj));
 			}
 		});
 
-		this.canvas.on("selection:created", () => {
+		this.canvas.on('selection:created' satisfies CanvasEventName, () => {
 			const activeObjects = this.canvas!.getActiveObjects();
 			this.selectionChangedCallbacks.forEach((callback) =>
 				callback(activeObjects),
 			);
 		});
 
-		this.canvas.on("selection:updated", () => {
+		this.canvas.on('selection:updated' satisfies CanvasEventName, () => {
 			const activeObjects = this.canvas!.getActiveObjects();
 			this.selectionChangedCallbacks.forEach((callback) =>
 				callback(activeObjects),
 			);
 		});
 
-		this.canvas.on("selection:cleared", () => {
+		this.canvas.on('selection:cleared' satisfies CanvasEventName, () => {
 			this.selectionChangedCallbacks.forEach((callback) => callback([]));
 		});
 
 		// 添加对象移动事件监听
-		this.canvas.on("object:moving", (options: any) => {
+		this.canvas.on('object:moving' satisfies CanvasEventName, (options: any) => {
 			const obj = options.target;
 			if (obj) {
 				this.objectMovingCallbacks.forEach((callback) => callback(obj));
@@ -62,7 +62,7 @@ export class CanvasManager implements ICanvasManager {
 		});
 
 		// 添加对象移动结束事件监听
-		this.canvas.on("object:modified", (options: any) => {
+		this.canvas.on('object:modified' satisfies CanvasEventName, (options: any) => {
 			const obj = options.target;
 			if (obj) {
 				this.objectModifiedCallback.forEach((callback) => callback(obj));

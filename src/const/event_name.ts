@@ -1,8 +1,8 @@
 // src/const/event_name.ts
-export enum CanvasEventName {
-	OBJECT_ADDED = "object:added",
-	OBJECT_REMOVED = "object:removed",
-	SELECTION_CREATED = "selection:created",
-	SELECTION_UPDATED = "selection:updated",
-	SELECTION_CLEARED = "selection:cleared",
-  }
+import type { CanvasEvents } from "fabric";
+
+/**
+ * Canvas event names derived from Fabric.js's CanvasEvents type
+ * This ensures type safety and automatically includes all available canvas events
+ */
+export type CanvasEventName = keyof CanvasEvents;
