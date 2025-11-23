@@ -1,10 +1,10 @@
-import type { Canvas, FabricObject } from "fabric";
+import type { Canvas as FabricCanvas, FabricObject } from "fabric";
 import { injectable } from 'inversify';
 import type { CanvasEventName } from "../const/event_name";
 
 @injectable()
-export class CanvasManager {
-	private canvas: Canvas | null = null;
+export class Canvas {
+	private canvas: FabricCanvas | null = null;
 	private objectAddedCallbacks: Array<(obj: FabricObject) => void> = [];
 	private objectRemovedCallbacks: Array<(obj: FabricObject) => void> = [];
 	private selectionChangedCallbacks: Array<(selected: FabricObject[]) => void> = [];
@@ -12,9 +12,12 @@ export class CanvasManager {
 	private objectMovingCallbacks: Array<(obj: FabricObject) => void> = [];
 	private objectModifiedCallback: Array<(obj: FabricObject) => void> = [];
 
-	public initialize(canvas: Canvas): void {
+	public initialize(canvas: FabricCanvas): void {
 		this.canvas = canvas;
 		this.setupEventListeners();
+	}
+	public onReady(callback: (e: Canvas) => void) {
+		callback(this);
 	}
 
 	private setupEventListeners(): void {
@@ -69,7 +72,7 @@ export class CanvasManager {
 		});
 	}
 
-	public getCanvas(): Canvas | null {
+	public getCanvas(): FabricCanvas | null {
 		return this.canvas;
 	}
 

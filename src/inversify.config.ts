@@ -1,16 +1,23 @@
 // src/inversify.config.ts
 import { Container } from 'inversify';
-import type { ICanvasManager } from './services/canvas-manager.interface';
-import { CanvasManager } from './services/canvas-manager';
-import type { IFormManager } from './services/form-manager.interface';
-import { FormManager } from './services/form-manager';
+import { Canvas } from './services/canvas';
 import "reflect-metadata"
-import { TYPES } from './types';
+import { Form } from './services/form';
+import { Controller } from './services/controller';
 
 const container = new Container();
 
-// 绑定服务
-container.bind<ICanvasManager>(TYPES.CanvasManager).to(CanvasManager);
-container.bind<IFormManager>(TYPES.FormManager).to(FormManager);
+const TYPES = {
+	Canvas: Symbol.for('Canvas'),
+	Form: Symbol.for('Form'),
+	Controller: Symbol.for('Controller'),
+	// 其他类型...
+};
 
-export { container };
+// 绑定服务
+container.bind<Canvas>(TYPES.Canvas).to(Canvas);
+container.bind<Form>(TYPES.Form).to(Form);
+container.bind<Controller>(TYPES.Controller).to(Controller)
+
+
+export { container, TYPES };

@@ -27,6 +27,7 @@
     "fabric": "^6.9.0",
     "inversify": "^7.10.4",
     "lodash-es": "^4.17.21",
+    "mitt": "^3.0.1",
     "reflect-metadata": "^0.2.2"
   }
 }
