@@ -1,135 +1,142 @@
 import type { Canvas as FabricCanvas, FabricObject } from "fabric";
 import { injectable } from 'inversify';
-import type { CanvasEventName } from "../const/event_name";
+
 import mitt from "mitt";
 
 enum EventName {
 	CanvasReady = 'canvas:ready',
 }
+
 @injectable()
 export class Canvas {
-	private canvas: FabricCanvas | null = null;
-	private objectAddedCallbacks: Array<(obj: FabricObject) => void> = [];
-	private objectRemovedCallbacks: Array<(obj: FabricObject) => void> = [];
-	private selectionChangedCallbacks: Array<(selected: FabricObject[]) => void> = [];
-	// 添加对象移动回调数组
-	private objectMovingCallbacks: Array<(obj: FabricObject) => void> = [];
-	private objectModifiedCallback: Array<(obj: FabricObject) => void> = [];
-	private onReadyCallbacks: Array<(canvas: Canvas) => void> = [];
-	private emitter = mitt();
+	#canvas: FabricCanvas | null = null;
+	#objectAddedCallbacks: Array<(obj: FabricObject) => void> = [];
+	#objectRemovedCallbacks: Array<(obj: FabricObject) => void> = [];
+	#selectionChangedCallbacks: Array<(selected: FabricObject[]) => void> = [];
+	#objectMovingCallbacks: Array<(obj: FabricObject) => void> = [];
+	#objectModifiedCallback: Array<(obj: FabricObject) => void> = [];
+	#onReadyCallbacks: Array<(canvas: Canvas) => void> = [];
+	#emitter = mitt();
 
-	public initialize(canvas: FabricCanvas): void {
-		this.canvas = canvas;
-		this.setupEventListeners();
-		this.emitter.emit(EventName.CanvasReady, this);
-	}
-	public onReady(callback: (e: Canvas) => void) {
-		this.onReadyCallbacks.push(callback);
+	initialize(canvas: FabricCanvas): void {
+		this.#canvas = canvas;
+		this.#setupEventListeners();
+		this.#emitter.emit(EventName.CanvasReady, this);
 	}
 
-	private setupEventListeners(): void {
-		if (!this.canvas) return;
+	onReady(callback: (e: Canvas) => void) {
+		this.#onReadyCallbacks.push(callback);
+	}
 
-		this.emitter.on(EventName.CanvasReady, () => this.onReadyCallbacks.forEach(callback => callback(this)));
+	#setupEventListeners(): void {
+		if (!this.#canvas) return;
 
-		this.canvas.on('object:added' satisfies CanvasEventName, (options: any) => {
+		//NOTE: 添加 canvas:ready 事件监听
+		this.#emitter.on(EventName.CanvasReady, () => this.#onReadyCallbacks.forEach(callback => callback(this)));
+
+		//NOTE: 添加对象添加事件监听
+		this.#canvas.on('object:added', (options: any) => {
 			const obj = options.target;
 			if (obj) {
-				this.objectAddedCallbacks.forEach((callback) => callback(obj));
+				this.#objectAddedCallbacks.forEach((callback) => callback(obj));
 			}
 		});
 
-		this.canvas.on('object:removed' satisfies CanvasEventName, (options: any) => {
+		//NOTE: 添加对象移除事件监听
+		this.#canvas.on('object:removed', (options: any) => {
 			const obj = options.target;
 			if (obj) {
-				this.objectRemovedCallbacks.forEach((callback) => callback(obj));
+				this.#objectRemovedCallbacks.forEach((callback) => callback(obj));
 			}
 		});
 
-		this.canvas.on('selection:created' satisfies CanvasEventName, () => {
-			const activeObjects = this.canvas!.getActiveObjects();
-			this.selectionChangedCallbacks.forEach((callback) =>
+		//NOTE: 添加对象选择事件监听
+		this.#canvas.on('selection:created', () => {
+			const activeObjects = this.#canvas!.getActiveObjects();
+			this.#selectionChangedCallbacks.forEach((callback) =>
 				callback(activeObjects),
 			);
 		});
 
-		this.canvas.on('selection:updated' satisfies CanvasEventName, () => {
-			const activeObjects = this.canvas!.getActiveObjects();
-			this.selectionChangedCallbacks.forEach((callback) =>
+		//NOTE: 添加对象选择更新事件监听
+		this.#canvas.on('selection:updated', () => {
+			const activeObjects = this.#canvas!.getActiveObjects();
+			this.#selectionChangedCallbacks.forEach((callback) =>
 				callback(activeObjects),
 			);
 		});
 
-		this.canvas.on('selection:cleared' satisfies CanvasEventName, () => {
-			this.selectionChangedCallbacks.forEach((callback) => callback([]));
+		//NOTE: 添加对象选择清除事件监听
+		this.#canvas.on('selection:cleared', () => {
+			this.#selectionChangedCallbacks.forEach((callback) => callback([]));
 		});
 
-		// 添加对象移动事件监听
-		this.canvas.on('object:moving' satisfies CanvasEventName, (options: any) => {
+		//NOTE: 添加对象移动事件监听
+		this.#canvas.on('object:moving', (options: any) => {
 			const obj = options.target;
 			if (obj) {
-				this.objectMovingCallbacks.forEach((callback) => callback(obj));
+				this.#objectMovingCallbacks.forEach((callback) => callback(obj));
 			}
 		});
 
-		// 添加对象移动结束事件监听
-		this.canvas.on('object:modified' satisfies CanvasEventName, (options: any) => {
+		//NOTE: 添加对象移动结束事件监听
+		this.#canvas.on('object:modified', (options: any) => {
 			const obj = options.target;
 			if (obj) {
-				this.objectModifiedCallback.forEach((callback) => callback(obj));
+				this.#objectModifiedCallback.forEach((callback) => callback(obj));
 			}
 		});
 	}
 
-	public getCanvas(): FabricCanvas | null {
-		return this.canvas;
+	getCanvas(): FabricCanvas | null {
+		return this.#canvas;
 	}
 
-	public addObject(object: FabricObject): void {
-		if (this.canvas) {
-			this.canvas.add(object);
+	addObject(object: FabricObject): void {
+		if (this.#canvas) {
+			this.#canvas.add(object);
 		}
 	}
 
-	public removeObject(object: FabricObject): void {
-		if (this.canvas) {
-			this.canvas.remove(object);
+	removeObject(object: FabricObject): void {
+		if (this.#canvas) {
+			this.#canvas.remove(object);
 		}
 	}
-	public addObjects(objects: FabricObject[]): void {
-		if (this.canvas) {
-			this.canvas.add(...objects);
+
+	addObjects(objects: FabricObject[]): void {
+		if (this.#canvas) {
+			this.#canvas.add(...objects);
 		}
 	}
+
 	removeObjects(objects: FabricObject[]): void {
-		if (this.canvas) {
-			this.canvas.remove(...objects);
+		if (this.#canvas) {
+			this.#canvas.remove(...objects);
 		}
 	}
 
-	public getObjects(): FabricObject[] {
-		return this.canvas ? this.canvas.getObjects() : [];
+	getObjects(): FabricObject[] {
+		return this.#canvas ? this.#canvas.getObjects() : [];
 	}
 
-	public onObjectAdded(callback: (obj: FabricObject) => void): void {
-		this.objectAddedCallbacks.push(callback);
+	onObjectAdded(callback: (obj: FabricObject) => void): void {
+		this.#objectAddedCallbacks.push(callback);
 	}
 
-	public onObjectRemoved(callback: (obj: FabricObject) => void): void {
-		this.objectRemovedCallbacks.push(callback);
+	onObjectRemoved(callback: (obj: FabricObject) => void): void {
+		this.#objectRemovedCallbacks.push(callback);
 	}
 
-	public onSelectionChanged(callback: (selected: FabricObject[]) => void): void {
-		this.selectionChangedCallbacks.push(callback);
+	onSelectionChanged(callback: (selected: FabricObject[]) => void): void {
+		this.#selectionChangedCallbacks.push(callback);
 	}
 
-	// 添加对象移动事件订阅方法
-	public onObjectMoving(callback: (obj: FabricObject) => void): void {
-		this.objectMovingCallbacks.push(callback);
+	onObjectMoving(callback: (obj: FabricObject) => void): void {
+		this.#objectMovingCallbacks.push(callback);
 	}
 
-	// 添加对象移动完成事件订阅方法
-	public onObjectModified(callback: (obj: FabricObject) => void): void {
-		this.objectModifiedCallback.push(callback);
+	onObjectModified(callback: (obj: FabricObject) => void): void {
+		this.#objectModifiedCallback.push(callback);
 	}
 }
