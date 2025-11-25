@@ -1,10 +1,10 @@
 <script lang="ts">
-	export let form_container: HTMLElement;
+	export let form_container: HTMLFormElement;
 </script>
 
-<div bind:this={form_container} class="form-container">
+<form bind:this={form_container} class="form-container">
 	<slot></slot>
-</div>
+</form>
 
 <style>
 	.form-container {

@@ -1,7 +1,11 @@
 import type { Canvas as FabricCanvas, FabricObject } from "fabric";
 import { injectable } from 'inversify';
 import type { CanvasEventName } from "../const/event_name";
+import mitt from "mitt";
 
+enum EventName {
+	CanvasReady = 'canvas:ready',
+}
 @injectable()
 export class Canvas {
 	private canvas: FabricCanvas | null = null;
@@ -11,17 +15,22 @@ export class Canvas {
 	// 添加对象移动回调数组
 	private objectMovingCallbacks: Array<(obj: FabricObject) => void> = [];
 	private objectModifiedCallback: Array<(obj: FabricObject) => void> = [];
+	private onReadyCallbacks: Array<(canvas: Canvas) => void> = [];
+	private emitter = mitt();
 
 	public initialize(canvas: FabricCanvas): void {
 		this.canvas = canvas;
 		this.setupEventListeners();
+		this.emitter.emit(EventName.CanvasReady, this);
 	}
 	public onReady(callback: (e: Canvas) => void) {
-		callback(this);
+		this.onReadyCallbacks.push(callback);
 	}
 
 	private setupEventListeners(): void {
 		if (!this.canvas) return;
+
+		this.emitter.on(EventName.CanvasReady, () => this.onReadyCallbacks.forEach(callback => callback(this)));
 
 		this.canvas.on('object:added' satisfies CanvasEventName, (options: any) => {
 			const obj = options.target;
