@@ -1,5 +1,5 @@
 import { Group, Circle, classRegistry } from "fabric";
-import { CustomText } from "./text"; // 导入自定义文本类
+import { CustomText, } from "./text"; // 导入自定义文本类
 import type { TClassProperties, TOptions } from "fabric";
 
 interface CircularTextOptions extends Partial<TClassProperties<Group>> {
@@ -9,13 +9,11 @@ interface CircularTextOptions extends Partial<TClassProperties<Group>> {
 	textColor?: string;
 	circleColor?: string;
 	showCircle?: boolean;
-	fontUrl?: string;
-	customFontFamily?: string;
 	spacing?: number; // 添加字符间距控制
 }
 
 export class CircularText extends Group {
-	static type = "CircularText";
+	static type = "circular_text";
 
 	radius: number;
 	text: string;

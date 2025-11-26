@@ -4,6 +4,7 @@ import { EventName, type Form } from './form';
 import type { FabricObject } from 'fabric';
 import type { CustomText } from '../objects/text';
 import type { CustomImage } from '../objects/image';
+import type { CircularText } from '../objects/circular_text';
 
 @injectable()
 export class Controller {
@@ -42,12 +43,12 @@ export class Controller {
 
 			const objects = canvas.getObjects();
 			const targetObject = objects.find((obj: FabricObject) => {
-				return obj.type === 'custom_text'
+				return obj.type === 'circular_text'
 			});
 
 			if (targetObject) {
 				// 使用示例字体：Google Fonts 的 Roboto
-				(targetObject as CustomText).changeFont(
+				(targetObject as CircularText).changeFont(
 					"https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2",
 					"Roboto"
 				)

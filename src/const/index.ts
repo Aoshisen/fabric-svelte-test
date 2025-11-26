@@ -1,7 +1,7 @@
 import { Circle, Rect } from "fabric";
 import { CustomText } from "../objects/text";
 import { CustomImage } from "../objects/image";
-import { CircularText } from "../objects/circular-text";
+import { CircularText } from "../objects/circular_text";
 
 export const App_name = "Svelte + fabric + Scss + Inversity js + zod + Typescript"
 
@@ -40,6 +40,7 @@ const circular_text = new CircularText({
 	top: 100,
 	radius: 100,
 	text: "Hello world",
+	textColor:"yellow",
 	fontSize: 20,
 	selectable: true,
 });
