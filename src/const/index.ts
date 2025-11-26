@@ -1,5 +1,6 @@
 import { Circle, Rect } from "fabric";
 import { CustomText } from "../objects/text";
+import { CustomImage } from "../objects/image";
 
 export const App_name = "Svelte + fabric + Scss + Inversity js + zod + Typescript"
 
@@ -27,4 +28,10 @@ const text = new CustomText("Hello World", {
 	fill: "black",
 	selectable: true,
 });
-export const objects = [rect, circle, text];
+const image = new CustomImage({
+	imageUrl: "https://fabric5.fabricjs.com/assets/pug.jpg",
+	left: 200,
+	top: 100,
+	selectable: true,
+});
+export const objects = [rect, circle, text, image];

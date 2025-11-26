@@ -20,7 +20,6 @@ export class CustomText extends FabricText {
 
 	constructor(text: string, options: CustomTextOptions = {}) {
 		super(text, options);
-
 		this.fontUrl = options.fontUrl;
 		this.customFontFamily = options.customFontFamily;
 

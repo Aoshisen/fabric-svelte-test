@@ -3,6 +3,7 @@ import type { Canvas } from './canvas';
 import { EventName, type Form } from './form';
 import type { FabricObject } from 'fabric';
 import type { CustomText } from '../objects/text';
+import type { CustomImage } from '../objects/image';
 
 @injectable()
 export class Controller {
@@ -40,7 +41,6 @@ export class Controller {
 			if (!canvas) return;
 
 			const objects = canvas.getObjects();
-			console.log(objects)
 			const targetObject = objects.find((obj: FabricObject) => {
 				return obj.type === 'custom_text'
 			});
@@ -51,6 +51,19 @@ export class Controller {
 					"https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2",
 					"Roboto"
 				)
+			}
+		}
+		if (key === "image") {
+			const canvas = this.canvasManager?.getCanvas();
+			if (!canvas) return;
+
+			const objects = canvas.getObjects();
+			const targetObject = objects.find((obj: FabricObject) => {
+				return obj.type === 'custom_image'
+			}) as CustomImage | undefined;
+
+			if (targetObject) {
+				targetObject.changeImage('https://picsum.photos/200/300')
 			}
 		}
 	}

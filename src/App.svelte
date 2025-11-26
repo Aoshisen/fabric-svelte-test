@@ -72,6 +72,9 @@
 			<FormItem>
 				<Input onChange={partialRight(handleFormItemChange, "font")} />
 			</FormItem>
+			<FormItem>
+				<Input onChange={partialRight(handleFormItemChange, "image")} />
+			</FormItem>
 		</Form>
 	</Layout>
 </Wrapper>
