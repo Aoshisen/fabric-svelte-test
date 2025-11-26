@@ -1,4 +1,4 @@
-// src/objects/custom_image.ts
+// src/objects/image.ts
 import { FabricImage, classRegistry } from "fabric";
 import type { ImageSource, TClassProperties } from "fabric";
 
@@ -20,10 +20,17 @@ export class CustomImage extends FabricImage {
 	};
 
 	constructor(options: CustomImageOptions = {}, element: ImageSource = new Image()) {
-		super(element, options);
-		this.imageUrl = options.imageUrl;
-		this.originalSrc = options.originalSrc;
+		// 先保存URL，但暂时不处理图像加载
+		const { imageUrl, originalSrc, ...restOptions } = options;
 
+		// 先调用父构造函数
+		super(element, restOptions);
+
+		// 保存属性
+		this.imageUrl = imageUrl;
+		this.originalSrc = originalSrc;
+
+		// 如果提供了imageUrl，则开始加载图像
 		if (this.imageUrl) {
 			this.loadImageFromUrl(this.imageUrl);
 		}
@@ -51,8 +58,13 @@ export class CustomImage extends FabricImage {
 			this.imageUrl = imageUrl;
 			this.#imageLoaded = true;
 
-			// 重新计算尺寸
+			// 重新计算尺寸和边界
+			this._setWidth(loadedImage.width);
+			this._setHeight(loadedImage.height);
 			this.applyResizeFilters();
+
+			// 重新计算对象边界
+			this.setCoords();
 
 			// 触发画布重绘
 			this.canvas?.requestRenderAll();
@@ -66,10 +78,19 @@ export class CustomImage extends FabricImage {
 
 	async changeImage(imageUrl: string): Promise<void> {
 		await this.loadImageFromUrl(imageUrl);
-		this.set('dirty', true); // 标记对象需要重绘
+		this.set('dirty', true);
+		// 重新计算坐标
+		this.setCoords();
 		this.canvas?.requestRenderAll();
 	}
 
+	_setWidth(value: number): void {
+		this.set('width', value);
+	}
+	
+	_setHeight(value: number): void {
+		this.set('height', value);
+	}
 	get isImageLoaded(): boolean {
 		return this.#imageLoaded;
 	}
@@ -81,12 +102,16 @@ export class CustomImage extends FabricImage {
 		};
 	}
 
-	async fromObject(object: any): Promise<CustomImage> {
-		const { element, ...options } = object;
-		const img = new CustomImage(options, element);
+	static async fromObject(object: any): Promise<CustomImage> {
+		// 从序列化对象创建时，先创建基础对象
+		const { element, imageUrl, originalSrc, ...options } = object;
 
-		if (object.imageUrl) {
-			await img.loadImageFromUrl(object.imageUrl);
+		// 创建一个临时的空图像对象
+		const img = new CustomImage(options);
+
+		// 如果有imageUrl，则加载图像
+		if (imageUrl) {
+			await img.loadImageFromUrl(imageUrl);
 		}
 
 		return img;

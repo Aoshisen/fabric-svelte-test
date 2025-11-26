@@ -30,17 +30,16 @@ const text = new CustomText("Hello World", {
 	selectable: true,
 });
 const image = new CustomImage({
-	imageUrl: "https://fabric5.fabricjs.com/assets/pug.jpg",
+	imageUrl: "https://fabric5.fabricjs.com/assets/15.svg",
 	left: 200,
 	top: 100,
 	selectable: true,
 });
 const circular_text = new CircularText({
-	left: 100,
-	top: 100,
+	left: 0,
+	top: 0,
 	radius: 100,
 	text: "Hello world",
-	textColor:"yellow",
 	fontSize: 20,
 	selectable: true,
 });
