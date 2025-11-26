@@ -1,6 +1,8 @@
 import { injectable } from 'inversify';
 import type { Canvas } from './canvas';
 import { EventName, type Form } from './form';
+import type { FabricObject } from 'fabric';
+import type { CustomText } from '../objects/text';
 
 @injectable()
 export class Controller {
@@ -16,7 +18,41 @@ export class Controller {
 		this.canvasManager?.onObjectModified(this.onCanvasObjectModified.bind(this))
 	}
 	onFormChange(e: any) {
-		console.log(e, "controller")
+		const { key, value } = e
+		// 当表单name字段变更时更新文本内容
+		if (key === 'name') {
+			const canvas = this.canvasManager?.getCanvas();
+			if (!canvas) return;
+
+			const objects = canvas.getObjects();
+			console.log(objects)
+			const targetObject = objects.find((obj: FabricObject) => {
+				return obj.type === 'custom_text'
+			});
+
+			if (targetObject) {
+				targetObject.set('text', value);
+				canvas.requestRenderAll();
+			}
+		}
+		if (key === "font") {
+			const canvas = this.canvasManager?.getCanvas();
+			if (!canvas) return;
+
+			const objects = canvas.getObjects();
+			console.log(objects)
+			const targetObject = objects.find((obj: FabricObject) => {
+				return obj.type === 'custom_text'
+			});
+
+			if (targetObject) {
+				// 使用示例字体：Google Fonts 的 Roboto
+				(targetObject as CustomText).changeFont(
+					"https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2",
+					"Roboto"
+				)
+			}
+		}
 	}
 	onCanvasObjectModified(e: any) {
 		console.log(e, "controller")

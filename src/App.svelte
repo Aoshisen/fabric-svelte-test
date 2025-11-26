@@ -47,11 +47,13 @@
 	});
 
 	$effect(() => {
-		//NOTE: 在表单和canvas都挂载好后在进行controller的初始化
-		if (all_ready) {
-			controller.initialize(canvasManager, formManager);
-			controller.run();
+		if (!all_ready) {
+			return;
 		}
+
+		//NOTE: 在表单和canvas都挂载好后在进行controller的初始化
+		controller.initialize(canvasManager, formManager);
+		controller.run();
 	});
 
 	onMount(() => {
@@ -66,6 +68,9 @@
 		<Form slot="content" bind:form_container>
 			<FormItem>
 				<Input onChange={partialRight(handleFormItemChange, "name")} />
+			</FormItem>
+			<FormItem>
+				<Input onChange={partialRight(handleFormItemChange, "font")} />
 			</FormItem>
 		</Form>
 	</Layout>

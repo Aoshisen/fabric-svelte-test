@@ -1,4 +1,5 @@
 import { Circle, Rect } from "fabric";
+import { CustomText } from "../objects/text";
 
 export const App_name = "Svelte + fabric + Scss + Inversity js + zod + Typescript"
 
@@ -19,4 +20,11 @@ const circle = new Circle({
 	fill: "blue",
 	selectable: true,
 });
-export const objects = [rect, circle];
+const text = new CustomText("Hello World", {
+	left: 500,
+	top: 100,
+	fontSize: 20,
+	fill: "black",
+	selectable: true,
+});
+export const objects = [rect, circle, text];
