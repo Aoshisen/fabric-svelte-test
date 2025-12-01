@@ -42,6 +42,17 @@ const circular_text = new CircularText({
 	text: "Hello world",
 	fontSize: 20,
 	selectable: true,
+	textPosition: "outside"
 });
 
-export const objects = [rect, circle, text, image, circular_text];
+const circular_text_inside = new CircularText({
+	left: 0,
+	top: 0,
+	radius: 100,
+	text: "Hello world",
+	fontSize: 20,
+	selectable: true,
+	textPosition: 'inside',
+});
+
+export const objects = [rect, circle, text, image, circular_text, circular_text_inside];

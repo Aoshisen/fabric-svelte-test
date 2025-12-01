@@ -17,6 +17,7 @@ interface CircularTextOptions extends CustomTextOptions, Partial<TClassPropertie
   circleColor?: string;
   showCircle?: boolean;
   spacing?: number;
+  textPosition?: 'outside' | 'inside'; // 新增属性
 }
 
 export class CircularText extends Group {
@@ -31,6 +32,7 @@ export class CircularText extends Group {
   fontUrl?: string;
   customFontFamily?: string;
   spacing: number;
+  textPosition: 'outside' | 'inside'; // 新增属性
 
   private circle: Circle;
   private textObjects: CustomText[] = [];
@@ -45,12 +47,13 @@ export class CircularText extends Group {
     fontUrl: undefined,
     customFontFamily: undefined,
     spacing: 0,
+    textPosition: 'outside', // 默认值设为 outside
   };
 
   constructor(options: CircularTextOptions = {}) {
     // 先创建空的组，但保留位置选项
     const { left, top, ...groupOptions } = options;
-    
+
     // 创建占位对象，传递位置信息
     super([], { left, top, ...groupOptions });
 
@@ -63,6 +66,7 @@ export class CircularText extends Group {
     this.fontUrl = options.fontUrl ?? CircularText.ownDefaults.fontUrl!;
     this.customFontFamily = options.customFontFamily ?? CircularText.ownDefaults.customFontFamily!;
     this.spacing = options.spacing ?? CircularText.ownDefaults.spacing!;
+    this.textPosition = options.textPosition ?? CircularText.ownDefaults.textPosition!;
 
     // 创建圆形路径
     this.circle = new Circle({
@@ -80,7 +84,7 @@ export class CircularText extends Group {
     // 添加对象到组
     const objectsToAdd = this.showCircle ? [this.circle, ...this.textObjects] : [...this.textObjects];
     this.add(...objectsToAdd);
-    
+
     // 确保位置正确设置
     if (left !== undefined) this.set('left', left);
     if (top !== undefined) this.set('top', top);
@@ -105,13 +109,30 @@ export class CircularText extends Group {
         char = '\u00A0';
       }
 
-      const textRadius = this.radius + this.fontSize / 2;
-      const angle = (charAngle * index) - (totalAngle / 2) - Math.PI / 2;
+      // 根据 textPosition 决定文本半径和旋转角度
+      let textRadius: number;
+      let baseAngle: number;
+
+      if (this.textPosition === 'outside') {
+        textRadius = this.radius + this.fontSize / 2;
+        baseAngle = -Math.PI / 2; // 起始角度向上
+      } else { // inside
+        textRadius = this.radius - this.fontSize / 2;
+        baseAngle = Math.PI / 2; // 起始角度向下（文字需要翻转）
+      }
+
+      const angle = (charAngle * index) - (totalAngle / 2) + baseAngle;
 
       const x = Math.cos(angle) * textRadius;
       const y = Math.sin(angle) * textRadius;
 
-      const rotation = (angle * 180) / Math.PI + 90;
+      // 计算旋转角度，根据位置调整方向
+      let rotation = (angle * 180) / Math.PI;
+      if (this.textPosition === 'outside') {
+        rotation += 90;
+      } else {
+        rotation -= 90;
+      }
 
       const textChar = new CustomText(char, {
         left: x,
@@ -128,6 +149,11 @@ export class CircularText extends Group {
 
       this.textObjects.push(textChar);
     });
+  }
+  // 添加设置文本位置的方法
+  public setTextPosition(position: 'outside' | 'inside'): void {
+    this.textPosition = position;
+    this.setText(this.text); // 重新创建文本对象以应用新位置
   }
 
   public setText(newText: string): void {
